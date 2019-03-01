@@ -23,7 +23,7 @@ var config = {
 };
 
 if (!process.env.CI) {
-    setupFiles.push("./test/cucumber.config.js");
+    setupFiles.push("./test/cucumber.config.ts");
     config.setupFiles = setupFiles;
 }
 

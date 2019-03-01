@@ -1,20 +1,24 @@
 import { Account } from 'aws-sdk/clients/organizations';
-import { SSMDataStore } from '../../src/DataStore';
-import { destructureAccount } from '../../src/utils';
-import { unionBy } from 'lodash';
+import { SSMDataStore, DataStore } from '../../src/DataStore';
 
-export const dataStore = new SSMDataStore();
+class DataStoreStub implements DataStore {
 
-let markedAccounts: MarkedAccount[] = [];
+  constructor(public markedAccounts: MarkedAccount[] = []) { }
 
-const getMarkedAccountSpy = jest.spyOn(dataStore, 'getMarkedAccounts');
+  async markAccounts(accounts: Account[]) {
+    const currentAccounts = await this.getMarkedAccounts();
+    this.markedAccounts = SSMDataStore.reconcileMarkedAccounts(currentAccounts, accounts);
+  }
 
-getMarkedAccountSpy.mockImplementation(async () => markedAccounts);
+  unmarkAccount(account: MarkedAccount): void {
+    throw new Error("Method not implemented.");
+  }
 
-const markAccountsSpy = jest.spyOn(dataStore, 'markAccounts');
+  async getMarkedAccounts(): Promise<MarkedAccount[]> {
+    return this.markedAccounts;
+  }
+}
 
-markAccountsSpy.mockImplementation(async (accounts: Account[]) => {
-    const currentAccounts = await dataStore.getMarkedAccounts();
-    let newAccounts = accounts.map(destructureAccount);
-    markedAccounts = unionBy(currentAccounts, newAccounts, 'id');
-});
+export function createDataStoreStub(): DataStore {
+  return new DataStoreStub();
+}

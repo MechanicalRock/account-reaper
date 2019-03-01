@@ -3,12 +3,24 @@
     "lib": [
       "es2017"
     ],
+    "skipLibCheck": true,
     "moduleResolution": "node",
     "strict": true,
     "sourceMap": true,
     "target": "es2017",
     "outDir": "lib",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowUnreachableCode": false,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true
   },
   "exclude": [
     "node_modules"

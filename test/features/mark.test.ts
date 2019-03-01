@@ -1,15 +1,17 @@
-import { defineFeature, DefineStepFunction, loadFeature } from 'jest-cucumber';
-import { accountMarker } from '../../src/handler';
-import { createAccount } from '../utils/OrganizationAccount';
-import * as DataStore from '../utils/DataStoreStub';
 import { Account } from 'aws-sdk/clients/organizations';
+import { defineFeature, DefineStepFunction, loadFeature } from 'jest-cucumber';
+import { DataStore } from '../../src/DataStore';
+import { accountMarker } from '../../src/handler';
 import * as utils from '../../src/utils';
+import { createDataStoreStub } from '../utils/DataStoreStub';
+import { createAccount } from '../utils/OrganizationAccount';
 
 const feature = loadFeature('./test/features/Mark.feature');
 
 defineFeature(feature, test => {
 
   let inputAccounts: Account[];
+  let dataStore: DataStore;
 
   beforeEach(() => {
     inputAccounts = [];
@@ -21,7 +23,7 @@ defineFeature(feature, test => {
 
     andTodayIs(and);
 
-    whenAccountReaperRuns(when);
+    whenAccountMarkerRuns(when);
 
     thenAccountShouldBeMarked(then);
   });
@@ -32,7 +34,7 @@ defineFeature(feature, test => {
 
     andTodayIs(and);
 
-    whenAccountReaperRuns(when);
+    whenAccountMarkerRuns(when);
 
     thenAccountShouldNotBeMarked(then);
   });
@@ -43,7 +45,7 @@ defineFeature(feature, test => {
 
     andTodayIs(and);
 
-    whenAccountReaperRuns(when);
+    whenAccountMarkerRuns(when);
 
     thenAccountShouldBeMarked(then);
   });
@@ -54,7 +56,7 @@ defineFeature(feature, test => {
 
     andTodayIs(and);
 
-    whenAccountReaperRuns(when);
+    whenAccountMarkerRuns(when);
 
     thenAccountShouldNotBeMarked(then);
   });
@@ -102,15 +104,14 @@ defineFeature(feature, test => {
 
   function andTodayIs(and: DefineStepFunction) {
     and(/^today is "(.*)"$/, (dateToday: string) => {
-      const timeSpy = jest.spyOn(utils, 'getTimeNow');
-      const mockDate = new Date(dateToday).getTime();
-      timeSpy.mockReturnValue(mockDate);
+      jest.spyOn(utils, 'getTimeNow').mockReturnValue(new Date(dateToday).getTime());
     });
   }
 
-  function whenAccountReaperRuns(when: DefineStepFunction) {
-    when('Account Reaper runs', async () => {
-      await accountMarker(inputAccounts, DataStore.dataStore);
+  function whenAccountMarkerRuns(when: DefineStepFunction) {
+    when('Account Marker runs', async () => {
+      dataStore = createDataStoreStub();
+      await accountMarker(inputAccounts, dataStore);
     });
   }
 
@@ -127,7 +128,7 @@ defineFeature(feature, test => {
   }
 
   async function isAccountMarked(accountName: string) {
-    const markedAccounts = await DataStore.dataStore.getMarkedAccounts();
+    const markedAccounts = await dataStore.getMarkedAccounts();
     return markedAccounts.some(({ name }) => name === accountName);
   }
 });
