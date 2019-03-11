@@ -1,0 +1,66 @@
+service:
+  name: account-reaper
+
+plugins:
+  - serverless-webpack
+  - serverless-step-functions
+  - serverless-secrets
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  region: ap-southeast-2
+  tracing: true
+  environment: ${file(env.yml):${opt:stage}}
+  environmentSecrets: 
+    SLACK_ACCESS_TOKEN: /account-reaper/${opt:stage}/SLACK_ACCESS_TOKEN
+    SLACK_HOOK: /account-reaper/${opt:stage}/SLACK_ACCESS_TOKEN
+  iamRoleStatements:
+    - Effect: Allow
+      Resource: arn:aws:ssm:*:*:parameter/*
+      Action:
+        - ssm:GetParameter
+        - ssm:PutParameter
+    - Effect: Allow
+      Resource: "*"
+      Action: 
+        - organizations:ListAccounts
+    - Effect: Allow
+      Resource: "*"
+      Action:
+        - xray:PutTraceSegments
+        - xray:PutTelemetryRecords
+
+custom:
+  serverlessSecrets:
+    providerOptions:
+      region: ap-southeast-2
+    keys:
+      default: alias/account_reaper_key
+
+functions:
+  markAccounts:
+    handler: src/handler.markAccounts
+  notifySlack:
+    handler: src/handler.notifySlack
+    
+stepFunctions:
+  stateMachines:
+    accountReaper:
+      events:
+        - schedule: rate(30 days)
+          path: account_reaper
+      definition:
+        Comment: This is the account reaper
+        StartAt: Mark
+        States:
+            Mark:
+              Type: Task
+              Resource: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:service}-${opt:stage}-markAccounts
+              ResultPath: $.markedAccounts
+              Next: Notify
+            Notify:
+                Type: Task
+                Resource: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:service}-${opt:stage}-notifySlack
+                InputPath: $.markedAccounts
+                End: true

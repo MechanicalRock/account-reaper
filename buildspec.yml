@@ -1,0 +1,15 @@
+version: 0.2
+
+env:
+  variables:
+    CI: true
+
+phases:
+  pre_build:
+    commands:
+      - npm i
+      - npm test
+
+  build:
+    commands:
+      - sls deploy --stage dev --verbose
