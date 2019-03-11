@@ -7,6 +7,7 @@ import { Marker } from './Marker';
 import { listOrganisationAccounts } from './Organizations';
 import { createNotifier, NotificationHandler } from './SlackNotification';
 import { logError } from './utils';
+import { load } from 'serverless-secrets/client';
 
 global.Promise = bluebird;
 
@@ -23,8 +24,9 @@ export const markAccounts: ScheduledHandler = async (event, context) => {
 }
 
 export const notifySlack: StepFuncHandler = async (event, context) => {
-  const segment = new AWSXray.Segment(context.functionName);
+  const segment = AWSXray.getSegment();
   try {
+    await load();
     await slackNotifier(event.markedAccounts, createNotifier());
   } catch (error) {
     logError(segment, 'Error in handler: ', error);

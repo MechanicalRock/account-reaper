@@ -25,7 +25,6 @@ defineFeature(feature, test => {
     });
 
     and(/^I have set my slack channel to "(.*)"$/, (channel) => {
-      expect(process.env.SLACK_HOOK).toBeDefined();
       expect(process.env.SLACK_CHANNEL_NAME).toBe(channel);
     });
 

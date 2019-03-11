@@ -7,6 +7,10 @@ import { generateTestAccounts } from '../utils/AccountSetup';
 import * as NotificationHandler from '../../src/SlackNotification';
 import { TestType, createNotificationStub } from "../utils/SlackNotificationStub";
 
+jest.mock('serverless-secrets/client', () => ({
+  load: jest.fn()
+}));
+
 describe('lambda handler', () => {
 
   it('should invoke the mark accounts service without blowing up', async () => {
