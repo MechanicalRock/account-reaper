@@ -1,8 +1,8 @@
-import { ssm, SSMDataStore } from "../../src/DataStore";
-import { dataStore as DataStoreStub } from '../utils/DataStoreStub';
+import { DataStore, ssm, SSMDataStore } from "../../src/DataStore";
+import { createDataStoreStub } from '../utils/DataStoreStub';
 import { createAccount } from '../utils/OrganizationAccount';
 
-function suite(datastore: SSMDataStore) {
+function suite(datastore: DataStore) {
 
   afterAll(async () => {
     try {
@@ -41,5 +41,5 @@ function suite(datastore: SSMDataStore) {
   });
 }
 
-suite(DataStoreStub);
+suite(createDataStoreStub());
 suite(new SSMDataStore());

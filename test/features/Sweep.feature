@@ -26,8 +26,8 @@ Feature: Remove all accounts marked for deletion
     Scenario: Delete accounts marked more than 7 days ago
         Given today is "09/01/2019"
         When the Account Reaper runs
-        Then 12345678, 22345678 should be deleted
-        But 32345678 should not be deleted
+        Then 12345678, 22345678 should be scheduled for deletion
+        But 32345678 should not be scheduled for deletion
 
             | Account Id | Data marked |
             | 12345678   | 1/1/2019    |
