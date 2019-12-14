@@ -18,7 +18,7 @@
   "author": "Amit Sharma, amit.sharma@mechanicalrock.io",
   "license": "MIT",
   "dependencies": {
-    "@aws-cdk/cdk": "^0.24.1",
+    "@aws-cdk/cdk": "^0.35.0",
     "@types/node": "^10.12.18",
     "cdk-constructs": "0.0.4"
   },
