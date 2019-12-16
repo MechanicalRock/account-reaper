@@ -9,10 +9,10 @@
     "acceptance-tests": "jest --verbose ./test/**/*.test.ts"
   },
   "dependencies": {
-    "bluebird": "^3.5.3",
+    "bluebird": "^3.7.2",
     "fast-json-stable-stringify": "^2.0.0",
     "lodash.unionby": "^4.8.0",
-    "node-fetch": "^2.3.0"
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",

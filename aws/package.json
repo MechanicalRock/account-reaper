@@ -20,7 +20,7 @@
   "dependencies": {
     "@aws-cdk/cdk": "^0.24.1",
     "@types/node": "^10.17.6",
-    "cdk-constructs": "0.0.4"
+    "cdk-constructs": "0.0.6"
   },
   "devDependencies": {
     "@types/fs-extra": "^5.0.4",
